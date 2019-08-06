@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<title>LD Player</title>
+	<!-- Including the Icons from Fontawesome -->
+	<link href="fontawesome/css/fontawesome.css" rel="stylesheet">
+	<link href="fontawesome/css/brands.css" rel="stylesheet">
+	<link href="fontawesome/css/solid.css" rel="stylesheet">
+
+	<!-- Including rangeslider CSS -->
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.2/rangeslider.min.css" />
+
+	<style>
+		html, body {
+			padding: 0px;
+			margin: 0px;
+			background-color: #000000;
+			border: none;
+		}
+		#ldVideo {
+			margin: 0px;
+			padding: 0px;
+			border: none;
+			position: absolute;
+			z-index: 997;
+		}
+		#ldVideo source {
+			margin: 0px;
+			padding: 0px;
+			border: none;
+		}
+		#ldControls {
+			position: absolute;
+			z-index: 998;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			transition-duration: 1s;
+		}
+		#ldControls:hover {
+			opacity: 1;
+		}
+		#ldControls .fa-play::before, #ldControls .fa-pause::before {
+			color: #FFFEFE;
+			cursor: pointer;
+			font-size: 20px;
+			position: absolute;
+			z-index: 998;
+			left: 10px;
+			bottom: 10px;
+		}
+
+		.progress-bar {
+			position: absolute;
+			z-index: 999;
+			bottom: 43px;
+			margin: 0px;
+			padding: 0px;
+			border: 0px;
+			color: #000;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			-ms-appearance: none;
+			background-color: #fff;
+			height: 4px;
+			border-radius: 10px;
+			outline: none;
+		}
+		.progress-bar::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			background-color: #fff;
+			border-radius: 50%;
+			cursor: pointer;
+			outline: none;
+		}
+		.progress-bar::-moz-slider-thumb {
+			-moz-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			background-color: #fff;
+			border-radius: 50%;
+			cursor: pointer;
+			outline: none;
+		}
+		.progress-bar::ms-thumb {
+			-ms-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			background-color: #fff;
+			border-radius: 50%;
+			cursor: pointer;
+			outline: none;
+		}
+		.time-video {
+			font-size: 20px;
+			line-height: 20px;
+			position: absolute;
+			z-index: 998;
+			bottom: 10px;
+			color: #fff;
+		}
+		.fa-volume-up, .fa-volume-mute {
+			color: #FFFEFE;
+			cursor: pointer;
+			font-size: 20px;
+			position: absolute;
+			z-index: 998;
+			bottom: 10px;
+		}
+		.volume-bar {
+			position: absolute;
+			z-index: 998;
+			bottom: 17px;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			-ms-appearance: none;
+			background-color: #fff;
+			height: 4px;
+			border-radius: 10px;
+			outline: none;
+		}
+		.volume-bar::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			background-color: #fff;
+			border-radius: 50%;
+			cursor: pointer;
+			outline: none;
+		}
+		.volume-bar::-moz-slider-thumb {
+			-moz-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			background-color: #fff;
+			border-radius: 50%;
+			cursor: pointer;
+			outline: none;
+		}
+		.volume-bar::-ms-slider-thumb {
+			-ms-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			background-color: #fff;
+			border-radius: 50%;
+			cursor: pointer;
+			outline: none;
+		}
+		.fa-compress {
+			color: #FFFEFE;
+			cursor: pointer;
+			font-size: 20px;
+			position: absolute;
+			z-index: 998;
+			bottom: 10px;
+			right: 10px;
+		}
+		.fa-share-alt {
+			color: #FFFEFE;
+			cursor: pointer;
+			font-size: 30px;
+			position: absolute;
+			z-index: 998;
+			top: 10px;
+			right: 10px;
+		}
+		.ld-title {
+			color: #FFFEFE;
+			cursor: pointer;
+			font-size: 30px;
+			line-height: 30px;
+			margin: 0px;
+			padding: 0px;
+			position: absolute;
+			z-index: 998;
+			top: 10px;
+			left: 10px;
+		}
+
+	</style>
+</head>
+<body>
+
+	<video id="ldVideo">
+		<source src="source/mov_bbb.mp4" type="video/mp4" />
+		<source src="source/mov_bbb.ogg" type="video/ogg" />
+		Your browser does not support HTML5 video.
+	</video>
+
+	<div id="ldControls">
+
+		<h1 class="ld-title">TITLE</h1>
+
+		<i class="fas fa-share-alt"></i>
+
+		<!-- Including progress bar -->
+		<input type="range" class="progress-bar" value="0" min="0">
+
+		<!-- Including butons "Play" e "Pause" -->
+		<i class="fas fa-play"></i>
+		<i class="fas fa-pause"></i>
+
+		<div class="time-video">
+			<span class="actual-time-ld-video">00:00:00</span> / 
+			<span class="duration-ld-video">00:00:00</span> 
+		</div>
+
+		<i class="fas fa-volume-up"></i> 
+		<i class="fas fa-volume-mute"></i> 
+		<!-- Including Volume bar -->
+		<input type="range" class="volume-bar" value="0.5" min="0" step="0.1" max="1">
+
+		<i class="fas fa-compress"></i>
+
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+
+	<script>
+		//
+		var widthWindow = $(window).width(), heightWindow = $(window).height()-4;
+		var progressBar = $('.progress-bar');
+		var btnPlayVideo = $('.fa-play'), btnPauseVideo = $('.fa-pause');
+		var btnVolume = $('.fa-volume-up');
+		var btnUnmute = $('.fa-volume-mute');
+		var spaceVolume = $('.volume');
+		var durationVideo = $('.time-video');
+		var spaceVolume = $('.volume-bar');
+		var ldVideo = $('#ldVideo');
+		var widthPlay = btnPlayVideo.width();
+		var widthDuration = durationVideo.width();
+		var widthVolume = btnVolume.width();
+		var widthBtnVolume = spaceVolume.width();
+		var widthSpaces = 50, marginControls = '10px';
+
+		btnPauseVideo.hide();
+
+		ldVideo.css('width',widthWindow);
+		ldVideo.css('height',heightWindow);
+		//$(window).css('border',0).css('margin',0).css('padding',0);
+		
+		//
+		progressBar.css('width',(widthWindow*0.99));
+		progressBar.css('left',(widthWindow*0.005));
+		//durationVideo.css('left',widthPlay+widthSpaces);
+		durationVideo.css('left',(widthPlay+widthSpaces)+'px');
+		//btnVolume.css('left',widthDuration+widthSpaces);
+		btnVolume.css('left',(widthPlay+widthDuration+widthSpaces+25)+'px');
+		btnUnmute.css('left',(widthPlay+widthDuration+widthSpaces+25)+'px');
+		spaceVolume.css('left',(widthPlay+widthDuration+widthVolume+widthSpaces+35)+'px');
+
+		$('.fa-play').click(function() {
+			playVideo();
+			btnPauseVideo.show();
+			btnPlayVideo.hide();
+		});
+		$('.fa-pause').click(function() {
+			pauseVideo();
+			btnPlayVideo.show();
+			btnPauseVideo.hide();
+		});
+
+		function playVideo() {
+			ldVideo.get(0).play();
+		}
+		function pauseVideo() {
+			ldVideo.get(0).pause();
+		}
+
+		//Ocult btn mute volume
+		btnUnmute.hide();
+
+		//Attibuting the volume with control
+		$('.volume-bar').on('change', function() {
+			ldVideo.prop("volume", this.value);
+		});
+
+		//Function for show and hide menu mobile
+		$(document).ready(function(){
+			$('.fa-volume-up, .fa-volume-mute').click(function(){
+				var actualVolume = ldVideo.prop("volume");
+				if (actualVolume > 0) {
+					ldVideo.prop("volume", 0);
+					$('.volume-bar').val(0);
+					btnUnmute.show();
+					btnVolume.hide();
+				} else {
+					ldVideo.prop("volume", 0.5);
+					$('.volume-bar').val(0.5);
+					btnUnmute.hide();
+					btnVolume.show();
+				}				
+			});
+		});
+
+		videoDuration = $('#ldVideo').get(0).duration;
+		onTrackedVideoFrame(0,videoDuration);
+
+		$(document).ready(function(){
+			ldVideo.on("timeupdate", 
+				function(event){
+					onTrackedVideoFrame(this.currentTime, this.duration);
+				});
+		});
+
+		//Refresh time on Player
+		function onTrackedVideoFrame(currentTime, duration){
+		    convertInTime (currentTime,".actual-time-ld-video");
+		    convertInTime (duration,".duration-ld-video");
+		}
+
+		//Function convert Time
+		function convertInTime (valueTime,item) {
+	    	hour = Math.floor(valueTime / 3600);
+	    	min = Math.floor(valueTime / 60);
+	    	seg = Math.floor(((valueTime / 60) % 1) * 60);
+
+	    	h = ('00'+hour).slice(-2);
+	    	m = ('00'+min).slice(-2);
+	    	s = ('00'+seg).slice(-2);
+
+	    	$(item).text(h+":"+m+":"+s);
+		}
+
+</script>
+</body>
+</html>
