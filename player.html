@@ -154,7 +154,7 @@
 			cursor: pointer;
 			outline: none;
 		}
-		.fa-compress {
+		.fa-compress, .fa-compress-arrows-alt {
 			color: #FFFEFE;
 			cursor: pointer;
 			font-size: 20px;
@@ -218,11 +218,14 @@
 		<!-- Including Volume bar -->
 		<input type="range" class="volume-bar" value="0.5" min="0" step="0.1" max="1">
 
-		<i class="fas fa-compress"></i>
+		<i class="fas fa-compress" onclick="fullscreenMode()"></i>
+		<i class="fas fa-compress-arrows-alt" onclick="fullscreenMode()"></i>
 
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+
+	<script src="js/jquery.fullscreen.min.js"></script>
 
 	<script>
 		//
@@ -240,12 +243,12 @@
 		var widthVolume = btnVolume.width();
 		var widthBtnVolume = spaceVolume.width();
 		var widthSpaces = 50, marginControls = '10px';
+		var fullscreenOpen = $('.fa-compress'), fullscreenClose = $('.fa-compress-arrows-alt');
 
 		btnPauseVideo.hide();
 
-		ldVideo.css('width',widthWindow);
-		ldVideo.css('height',heightWindow);
-		//$(window).css('border',0).css('margin',0).css('padding',0);
+		ldVideo.width('100%');
+		ldVideo.height('100%');
 		
 		//
 		progressBar.css('width',(widthWindow*0.99));
@@ -281,9 +284,16 @@
 		//Attibuting the volume with control
 		$('.volume-bar').on('change', function() {
 			ldVideo.prop("volume", this.value);
+			if (this.value == 0) {
+				btnUnmute.show();
+				btnVolume.hide();
+			} else {
+				btnUnmute.hide();
+				btnVolume.show();
+			}
 		});
 
-		//Function for show and hide menu mobile
+		//Function for control volume
 		$(document).ready(function(){
 			$('.fa-volume-up, .fa-volume-mute').click(function(){
 				var actualVolume = ldVideo.prop("volume");
@@ -301,9 +311,6 @@
 			});
 		});
 
-		videoDuration = $('#ldVideo').get(0).duration;
-		onTrackedVideoFrame(0,videoDuration);
-
 		$(document).ready(function(){
 			ldVideo.on("timeupdate", 
 				function(event){
@@ -311,25 +318,75 @@
 				});
 		});
 
-		//Refresh time on Player
+		var durationVideo = ldVideo.get(0).duration;
+		var currentTimeVideo = ldVideo.get(0).currentTime;
+		if (isNaN(durationVideo)) {
+			location.reload();
+		}
+		onTrackedVideoFrame(0,durationVideo);
+
+
+
+		//Attibuting the volume with control
+		$(document).ready(function(){
+			progressBar.on('change', function() {
+				var percentage = (durationVideo / progressBar.val()) * 100;
+				ldVideo.get(0).currentTime = (percentage*durationVideo) / 100;
+			});
+		});
+
+		//Update time on Player
 		function onTrackedVideoFrame(currentTime, duration){
-		    convertInTime (currentTime,".actual-time-ld-video");
-		    convertInTime (duration,".duration-ld-video");
+			convertInTime (currentTime,".actual-time-ld-video");
+			convertInTime (duration,".duration-ld-video");	    
 		}
 
 		//Function convert Time
 		function convertInTime (valueTime,item) {
-	    	hour = Math.floor(valueTime / 3600);
-	    	min = Math.floor(valueTime / 60);
-	    	seg = Math.floor(((valueTime / 60) % 1) * 60);
+			hour = Math.floor(valueTime / 3600);
+			min = Math.floor(valueTime / 60);
+			seg = Math.floor(((valueTime / 60) % 1) * 60);
 
-	    	h = ('00'+hour).slice(-2);
-	    	m = ('00'+min).slice(-2);
-	    	s = ('00'+seg).slice(-2);
+			h = ('00'+hour).slice(-2);
+			m = ('00'+min).slice(-2);
+			s = ('00'+seg).slice(-2);
 
-	    	$(item).text(h+":"+m+":"+s);
-		}
+			$(item).text(h+":"+m+":"+s);
 
-</script>
+	    	//Update the progress-bar
+	    	if (item == ".actual-time-ld-video") {
+	    		progress = (ldVideo.get(0).currentTime / ldVideo.get(0).duration) * 100;
+	    		progressBar.val(progress);
+	    	}
+
+	    	//Update stop button to play when video ends
+	    	if (ldVideo.get(0).currentTime == ldVideo.get(0).duration) {
+	    		btnPlayVideo.show();
+	    		btnPauseVideo.hide();
+	    	}
+	    }
+
+
+	    //Function to fullscreen
+	    fullscreenClose.hide();
+	    $(function() {
+		    fullscreenOpen.click(function() {
+		        $('body').fullscreen();
+		        ldVideo.width('100%');
+				ldVideo.height('100%');
+		        fullscreenClose.show();
+	    		fullscreenOpen.hide();
+	    		return false;
+		    });
+		    fullscreenClose.click(function() {
+		        $.fullscreen.exit();
+		        ldVideo.width('100%');
+				ldVideo.height('100%');
+		        fullscreenClose.hide();
+	    		fullscreenOpen.show();
+	    		return false;
+		    });
+		});
+	</script>
 </body>
 </html>
