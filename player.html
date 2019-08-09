@@ -184,6 +184,7 @@
 			z-index: 998;
 			top: 10px;
 			left: 10px;
+			font-family: 'Sans Serif' !important;
 		}
 		#social-share {
 			position: absolute;
@@ -369,7 +370,11 @@
 
 		function shareLDVideo(chosenNetwork) {
 
-			url = '';
+			var url_whole       = location.href.substring(location.href);
+			var sep_url         = url_whole.split("/");
+			var url_base        = 'http://'+sep_url[2];
+			//url = '';
+			url = url_whole;
 
 			if (chosenNetwork == "fb") {
 				window.open("https://www.facebook.com/sharer/sharer.php?u="+url);
