@@ -184,7 +184,7 @@
 			z-index: 998;
 			top: 10px;
 			left: 10px;
-			font-family: 'Sans Serif' !important;
+			font-family: 'Arial' !important;
 		}
 		#social-share {
 			position: absolute;
@@ -237,7 +237,7 @@
 
 	<video id="ldVideo">
 		<source src="source/mov_bbb.mp4" type="video/mp4" />
-		<source src="source/mov_bbb.ogg" type="video/ogg" />
+		<!--source src="source/mov_bbb.ogg" type="video/ogg" /-->
 		Your browser does not support HTML5 video.
 	</video>
 
@@ -312,6 +312,7 @@
 		var fullscreenOpen = $('.fa-compress'), fullscreenClose = $('.fa-compress-arrows-alt');	
 		var heightMiddlePlay = largeMiddlePlay.height() ,marginTopMiddlePlay = (heightWindow -heightMiddlePlay)/2,
 		widthMiddlePlay = largeMiddlePlay.width(), marginLeftMiddlePlay = (widthWindow - widthMiddlePlay)/2;
+		var setTimeHide, clearTimeHide;
 
 		btnPauseVideo.hide();
 
@@ -326,8 +327,9 @@
 		socialShare.css('margin-left',marginLeftShare+'px');
 
 		//
-		progressBar.css('width',(widthWindow*0.99));
-		progressBar.css('left',(widthWindow*0.005));
+		progressBar.width('99%');
+		progressBar.css('margin-left','0.5%').css('margin-right','0.5%');
+
 		//durationVideo.css('left',widthPlay+widthSpaces);
 		durationVideo.css('left',(widthPlay+widthSpaces)+'px');
 		//btnVolume.css('left',widthDuration+widthSpaces);
@@ -353,6 +355,12 @@
 		}
 		function pauseVideo() {
 			ldVideo.get(0).pause();
+			ldControls.fadeIn();
+			if (clearTimeHide > 0) {
+				clearTimeToHide();
+			} else {
+				hideControlsTimeOut();
+			}
 		}
 
 		$(document).ready(function(){
@@ -363,9 +371,15 @@
 		});
 
 		function hideControlsTimeOut() {
-			setTimeout(function(){ 
+			setTimeHide = setTimeout(function(){ 
 				ldControls.fadeOut();
-			},1500);
+			},2000);
+			clearTimeHide = 1;
+		}
+
+		function clearTimeToHide() {
+			clearTimeout(setTimeHide);
+			clearTimeHide = 0;
 		}
 
 		function shareLDVideo(chosenNetwork) {
@@ -518,6 +532,11 @@
 		$(function() {
 			btnShare.click(function() {
 				socialShare.toggle();
+				if (clearTimeHide > 0) {
+					clearTimeToHide();
+				} else {
+					hideControlsTimeOut();
+				}
 			});
 		});
 
